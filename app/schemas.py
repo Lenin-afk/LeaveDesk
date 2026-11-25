@@ -20,7 +20,12 @@ class LeaveCreate(BaseModel):
     hours: str | None
     reason: str | None
 
+
 class WFHCreate(BaseModel):
     start_date: date
     end_date: date
     reason: str | None
+
+
+class DecisionRequest(BaseModel):
+    comment: str

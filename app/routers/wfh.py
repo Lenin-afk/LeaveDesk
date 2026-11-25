@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models import User, WFHRequest, WFHRequest
+from app.models import User, LeaveRequest, WFHRequest
 from app.schemas import WFHCreate
 from app.security import get_current_user
 from datetime import date, timedelta
@@ -32,17 +32,19 @@ def create_wfh(data: WFHCreate, db: Session = Depends(get_db), current_user: Use
         if existing.start_date <= data.end_date and existing.end_date >= data.start_date:
             raise HTTPException(status_code=409, detail="WFH dates overlaps")
 
-    existing_leaves = db.query(WFHRequest).filter(
-        WFHRequest.user_id == current_user.id,
-        WFHRequest.status.in_(["PENDING", "APPROVED"]),
-        WFHRequest.duration_type == "FULL_DAY",
-        WFHRequest.date >= data.start_date,
-        WFHRequest.date <= data.end_date
+    existing_leaves = db.query(LeaveRequest).filter(
+        LeaveRequest.user_id == current_user.id,
+        LeaveRequest.status.in_(["PENDING", "APPROVED"]),
+        LeaveRequest.duration_type == "FULL_DAY",
+        LeaveRequest.date >= data.start_date,
+        LeaveRequest.date <= data.end_date
     ).all()
 
     if existing_leaves:
         raise HTTPException(
-            status_code=409, details="WFH overlaps with full day leave")
+            status_code=409,
+            detail="WFH overlaps with full day leave"
+        )
 
     request = WFHRequest(
         user_id=current_user.id,

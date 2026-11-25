@@ -36,6 +36,11 @@ class LeaveRequest(Base):
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
+    decided_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True)
+    decided_at: Mapped[DateType | None] = mapped_column(
+        DateTime(timezone=True), nullable=True)
+    decision_comment: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 class WFHRequest(Base):
@@ -49,3 +54,8 @@ class WFHRequest(Base):
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
+    decided_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True)
+    decided_at: Mapped[DateType | None] = mapped_column(
+        DateTime(timezone=True), nullable=True)
+    decision_comment: Mapped[str | None] = mapped_column(Text, nullable=True)
